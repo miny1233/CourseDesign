@@ -10,4 +10,5 @@ public class Terminators extends CharacterBase{
     public void setVal(String val) {
         this.val = val;
     }
+    public Terminators(String val) {this.val = val;}
 }
