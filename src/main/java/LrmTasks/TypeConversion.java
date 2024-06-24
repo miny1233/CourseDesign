@@ -14,7 +14,7 @@ public class TypeConversion {
     private Map<String, Terminators> TerminatorsMap = new HashMap<>();
 
     private boolean isNonTerminator(String symbol) {
-        return symbol.matches("^[A-Z]('?[A-Z]*)*$");
+        return symbol.matches("^[A-Z]('?[A-Z]*)?$");
     }
 
     public Map<String, NonTerminators> getNonTerminatorsMap() {
@@ -33,10 +33,10 @@ public class TypeConversion {
             if (parts.length != 2) {
                 throw new IllegalArgumentException("文法错误: " + rule);
             }
-            String leftParts = parts[0].trim();
-            NonTerminators nonTerminators = NonTerminatorsMap.computeIfAbsent(leftParts, k -> {
+            String leftPart = parts[0].trim();
+            NonTerminators nonTerminators = NonTerminatorsMap.computeIfAbsent(leftPart, k -> {
                 NonTerminators nt = new NonTerminators();
-                nt.setVal(leftParts);
+                nt.setVal(leftPart);
                 return nt;
             });
 
@@ -61,22 +61,27 @@ public class TypeConversion {
         }
     }
 
-//用于保存文法
+    //用于保存文法
     public List<List<CharacterBase>> saveGrammar(String grammar) {
         ConverseGrammar(grammar);
         List<List<CharacterBase>> grammarList = new ArrayList<>();
+
         for (NonTerminators nonT : NonTerminatorsMap.values()) {
             List<CharacterBase> gra = new ArrayList<>();
             gra.add(nonT);
+            Map<Character, List<CharacterBase>> mapping = nonT.getMapping();
+            for (Map.Entry<Character, List<CharacterBase>> entry : mapping.entrySet()) {
+                gra.addAll(entry.getValue());
+            }
             grammarList.add(gra);
-            nonT.setGrammar(grammarList);
         }
+
         return grammarList;
     }
 
     public static void main(String[] args) {
         TypeConversion typeConversion = new TypeConversion();
-        String grammar = "S -> E'\nE' -> a\nB -> b";
+        String grammar = "S -> + E'\nE' -> a\nB -> B' +";
         List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
 
         System.out.println("Non-terminators:");
