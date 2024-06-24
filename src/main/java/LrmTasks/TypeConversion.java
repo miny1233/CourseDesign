@@ -9,9 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.System.exit;
+
 public class TypeConversion {
     private Map<String, NonTerminators> NonTerminatorsMap = new HashMap<>();
     private Map<String, Terminators> TerminatorsMap = new HashMap<>();
+    private boolean isValidSymbol(String symbol) {
+        return isNonTerminator(symbol) || symbol.matches("^[a-z0-9+\\-*/]$");
+    }
 
     private boolean isNonTerminator(String symbol) {
         return symbol.matches("^[A-Z]('?[A-Z]*)?$");
@@ -27,6 +32,9 @@ public class TypeConversion {
 
     //用于String到Object的类型转换
     public void ConverseGrammar(String grammar) {
+        if(!isValidGrammar(grammar)){
+            exit(0);
+        };
         String[] rules = grammar.split("\n");
         for (String rule : rules) {
             String[] parts = rule.split("->");
@@ -40,22 +48,36 @@ public class TypeConversion {
                 return nt;
             });
 
-            String[] rightParts = parts[1].trim().split(" ");
-            for (String rightPart : rightParts) {
-                if (isNonTerminator(rightPart)) {
-                    NonTerminators rightN = NonTerminatorsMap.computeIfAbsent(rightPart, k -> {
+            String rightPart = parts[1].trim();
+            for (int i = 0; i < rightPart.length(); ) {
+                if (Character.isUpperCase(rightPart.charAt(i))) {
+                    StringBuilder nonTerminator = new StringBuilder();
+                    nonTerminator.append(rightPart.charAt(i));
+                    i++;
+                    while (i < rightPart.length() && (Character.isUpperCase(rightPart.charAt(i)) || rightPart.charAt(i) == '\'')) {
+                        nonTerminator.append(rightPart.charAt(i));
+                        i++;
+                    }
+                    NonTerminators rightN = NonTerminatorsMap.computeIfAbsent(nonTerminator.toString(), k -> {
                         NonTerminators nt = new NonTerminators();
-                        nt.setVal(rightPart);
+                        nt.setVal(nonTerminator.toString());
                         return nt;
                     });
                     nonTerminators.getMapping().computeIfAbsent('N', k -> new ArrayList<>()).add(rightN);
                 } else {
-                    Terminators terminator = TerminatorsMap.computeIfAbsent(rightPart, k -> {
-                        Terminators t = new Terminators();
-                        t.setVal(rightPart);
-                        return t;
+                    StringBuilder terminator = new StringBuilder();
+                    terminator.append(rightPart.charAt(i));
+                    i++;
+                    while (i < rightPart.length() && !Character.isUpperCase(rightPart.charAt(i))) {
+                        terminator.append(rightPart.charAt(i));
+                        i++;
+                    }
+                    Terminators t = TerminatorsMap.computeIfAbsent(terminator.toString(), k -> {
+                        Terminators term = new Terminators();
+                        term.setVal(terminator.toString());
+                        return term;
                     });
-                    nonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(terminator);
+                    nonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(t);
                 }
             }
         }
@@ -79,9 +101,55 @@ public class TypeConversion {
         return grammarList;
     }
 
+    //用于检查文法是否合法
+    public boolean isValidGrammar(String grammar) {
+        String[] rules = grammar.split("\n");
+        for (String rule : rules) {
+            String[] parts = rule.split("->");
+            if (parts.length != 2) {
+                System.out.println("文法错误: 规则没有正确的分隔符 '->' : " + rule);
+                return false;
+            }
+            String leftPart = parts[0].trim();
+            if (!isNonTerminator(leftPart)) {
+                System.out.println("文法错误: 左部不是一个有效的非终结符 : " + leftPart);
+                return false;
+            }
+            String rightPart = parts[1].trim();
+            for (int i = 0; i < rightPart.length(); ) {
+                if (Character.isUpperCase(rightPart.charAt(i))) {
+                    StringBuilder nonTerminator = new StringBuilder();
+                    nonTerminator.append(rightPart.charAt(i));
+                    i++;
+                    while (i < rightPart.length() && (Character.isUpperCase(rightPart.charAt(i)) || rightPart.charAt(i) == '\'')) {
+                        nonTerminator.append(rightPart.charAt(i));
+                        i++;
+                    }
+                    if (!isValidSymbol(nonTerminator.toString())) {
+                        System.out.println("文法错误: 右部包含无效符号 : " + nonTerminator);
+                        return false;
+                    }
+                } else {
+                    StringBuilder terminator = new StringBuilder();
+                    terminator.append(rightPart.charAt(i));
+                    i++;
+                    while (i < rightPart.length() && !Character.isUpperCase(rightPart.charAt(i))) {
+                        terminator.append(rightPart.charAt(i));
+                        i++;
+                    }
+                    if (!isValidSymbol(terminator.toString())) {
+                        System.out.println("文法错误: 右部包含无效符号 : " + terminator);
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         TypeConversion typeConversion = new TypeConversion();
-        String grammar = "S -> + E'\nE' -> a\nB -> B' +";
+        String grammar = "S->+E'\nE'->a\nB->B'+";
         List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
 
         System.out.println("Non-terminators:");
@@ -102,5 +170,4 @@ public class TypeConversion {
             System.out.println();
         }
     }
-    //先不要动这个代码
 }
