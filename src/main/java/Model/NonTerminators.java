@@ -51,4 +51,8 @@ public class NonTerminators extends CharacterBase{
         super.val = val;
     }
 
+    public NonTerminators() {
+        super();
+    }
+
 }
