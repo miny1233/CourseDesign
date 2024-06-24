@@ -22,9 +22,8 @@ public class Analyzer {
         machine = new MachineStatus();
 
         machine.input_str = new ArrayDeque<>();
-        for (int idx = 0;idx < sentence.length();idx++)
-            machine.input_str.add(sentence.getChars(idx,idx));
-
+        for (var ch : sentence.toCharArray())
+            machine.input_str.add(ch);
 
         machine.AnalyStack.push(Begin);
     }
