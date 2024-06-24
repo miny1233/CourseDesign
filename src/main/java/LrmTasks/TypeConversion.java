@@ -2,7 +2,7 @@ package LrmTasks;
 
 import Model.NonTerminators;
 import Model.Terminators;
-import Model.CharacterBase; // Assuming there's a base class for characters
+import Model.CharacterBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
