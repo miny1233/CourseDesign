@@ -5,4 +5,8 @@ public class Terminators extends CharacterBase{
         super();
         super.val = val;
     }
+    public Terminators()
+    {
+        super();
+    }
 }
