@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public class NonTerminators extends CharacterBase{
-    private String val;
     private Map<Character, List<CharacterBase>> mapping = new HashMap<>();
 
     private List<Terminators> first = new ArrayList<>();
@@ -47,16 +46,9 @@ public class NonTerminators extends CharacterBase{
         this.grammar = grammar;
     }
 
-    public String getVal() {
-        return val;
-    }
-
-    public void setVal(String val) {
-        this.val = val;
-    }
-
     public NonTerminators(String val) {
-        setVal(val);
+        super();
+        super.val = val;
     }
 
 }

@@ -1,12 +1,13 @@
 package Model;
 
 public class CharacterBase {
+    String val;
     public String getVal() {
-        return null;
+        return val;
     }
 
     public void setVal(String val) {
-
+        this.val = val;
     }
 
     @Override
@@ -25,5 +26,9 @@ public class CharacterBase {
         }
 
         return false;
+    }
+    // 禁止构造
+    CharacterBase(){
+
     }
 }
