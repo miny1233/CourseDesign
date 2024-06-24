@@ -55,8 +55,8 @@ public class NonTerminators extends CharacterBase{
         this.val = val;
     }
 
-    public NonTerminators() {
-
+    public NonTerminators(String val) {
+        setVal(val);
     }
 
 }

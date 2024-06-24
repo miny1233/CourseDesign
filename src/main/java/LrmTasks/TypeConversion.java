@@ -37,10 +37,10 @@ public class TypeConversion {
             for (String rightPart : rightParts) {
                 if(isNonTerminator(rightPart)){
                     NonTerminators rightN = NonTerminatorsMap.computeIfAbsent(rightPart,NonTerminators::new);
-                    NonTerminators.getMapping().computeIfAbsent('N', k -> new ArrayList<>()).add(rightN);
+                    //NonTerminators.getMapping().computeIfAbsent('N', k -> new ArrayList<>()).add(rightN);
                 } else {
                 Terminators terminator = TerminatorsMap.computeIfAbsent(rightPart, Terminators::new);
-                NonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(terminator);
+                //NonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(terminator);
                 }
             }
         }
