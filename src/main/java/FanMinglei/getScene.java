@@ -1,6 +1,8 @@
 package FanMinglei;
 
+import LrmTasks.TypeConversion;
 import Model.NonTerminators;
+import Model.Terminators;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,10 +11,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 登录页面
  */
 public class getScene {
+    private TypeConversion typeConversion = new TypeConversion();
+
     public Scene getFirstScene() {
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(20, 20, 20, 20));
@@ -36,7 +43,9 @@ public class getScene {
 
         submit.setOnAction(event -> {
             String text = input.getText();
+            typeConversion.ConverseGrammar(text);
             System.out.println("输入的文本内容是：" + text);
+
             Stage secondStage = new Stage();
             Scene secondScene = getSecondScene();
             secondStage.setTitle("预测分析器");
@@ -111,27 +120,37 @@ public class getScene {
         Label titleLabel = new Label("First集");
         titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;"); // 设置标题的样式
 
-        TableView<NonTerminators> tableView = new TableView<>();
+        TableView<Terminators> tableView = new TableView<>();
         tableView.setPrefHeight(200); // 设置TableView的高度
+        Map<String, Terminators> terminatorsMap = typeConversion.getTerminatorsMap();
+        Set<String> keySet = terminatorsMap.keySet();
+        for(String str: terminatorsMap.keySet()){
+            System.out.println("str = " + str);
+        }
+        for(String str : keySet){
+            TableColumn column = new TableColumn(terminatorsMap.get(str).getVal());
+            column.setMinWidth(80);
+            tableView.getColumns().add(column);
+        }
 
         // 创建表格列
-        TableColumn<NonTerminators, String> empty = new TableColumn<>(" ");
+       /* TableColumn<NonTerminators, String> empty = new TableColumn<>(" ");
         TableColumn<NonTerminators, String> first = new TableColumn<>("+");
         TableColumn<NonTerminators, String> second = new TableColumn<>("*");
         TableColumn<NonTerminators, String> third = new TableColumn<>("(");
         TableColumn<NonTerminators, String> fourth = new TableColumn<>(")");
-        TableColumn<NonTerminators, String> fifth = new TableColumn<>("i");
+        TableColumn<NonTerminators, String> fifth = new TableColumn<>("i");*/
 
         // 设置列宽度
-        empty.setMinWidth(80);
+       /* empty.setMinWidth(80);
         first.setMinWidth(80);
         second.setMinWidth(80);
         third.setMinWidth(80);
         fourth.setMinWidth(80);
-        fifth.setMinWidth(80);
+        fifth.setMinWidth(80);*/
 
         // 将列添加到TableView
-        tableView.getColumns().addAll(empty, first, second, third, fourth, fifth);
+        //tableView.getColumns().addAll(empty, first, second, third, fourth, fifth);
 
         // 将标题和TableView添加到VBox
         vBox.getChildren().addAll(titleLabel, tableView);

@@ -74,7 +74,7 @@ public class TypeConversion {
         return grammarList;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         TypeConversion typeConversion = new TypeConversion();
         String grammar = "S -> E'\nE' -> a\nB -> b";
         List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
@@ -96,5 +96,5 @@ public class TypeConversion {
             }
             System.out.println();
         }
-    }
+    }*/
 }
