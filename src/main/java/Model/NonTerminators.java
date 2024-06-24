@@ -13,12 +13,38 @@ public class NonTerminators extends CharacterBase{
 
     private List<Terminators> follow = new ArrayList<>();
 
+    private List<List<CharacterBase>> grammar;
+
     public void setMapping(Map<Character, List<CharacterBase>> mapping) {
         this.mapping = mapping;
     }
 
     public Map<Character, List<CharacterBase>> getMapping() {
         return mapping;
+    }
+
+    public List<Terminators> getFirst() {
+        return first;
+    }
+
+    public void setFirst(List<Terminators> first) {
+        this.first = first;
+    }
+
+    public List<Terminators> getFollow() {
+        return follow;
+    }
+
+    public void setFollow(List<Terminators> follow) {
+        this.follow = follow;
+    }
+
+    public List<List<CharacterBase>> getGrammar() {
+        return grammar;
+    }
+
+    public void setGrammar(List<List<CharacterBase>> grammar) {
+        this.grammar = grammar;
     }
 
     public String getVal() {
@@ -29,8 +55,8 @@ public class NonTerminators extends CharacterBase{
         this.val = val;
     }
 
-    public NonTerminators(String val) {
-        this.val = val;
+    public NonTerminators() {
+
     }
 
 }
