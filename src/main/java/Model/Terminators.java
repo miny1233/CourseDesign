@@ -11,5 +11,5 @@ public class Terminators extends CharacterBase{
         this.val = val;
     }
 
-    public Terminators(String val) {}
+    public Terminators() {}
 }

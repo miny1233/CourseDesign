@@ -2,9 +2,11 @@ package LrmTasks;
 
 import Model.NonTerminators;
 import Model.Terminators;
+import Model.CharacterBase; // Assuming there's a base class for characters
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TypeConversion {
@@ -23,33 +25,59 @@ public class TypeConversion {
         return TerminatorsMap;
     }
 
-    public void ConverseGrammar(String grammar){
+    //用于String到Object的类型转换
+    public void ConverseGrammar(String grammar) {
         String[] rules = grammar.split("\n");
         for (String rule : rules) {
             String[] parts = rule.split("->");
-            if(parts.length != 2){
+            if (parts.length != 2) {
                 throw new IllegalArgumentException("文法错误: " + rule);
             }
             String leftParts = parts[0].trim();
-            NonTerminators nonTerminators = NonTerminatorsMap.computeIfAbsent(leftParts,NonTerminators::new);
+            NonTerminators nonTerminators = NonTerminatorsMap.computeIfAbsent(leftParts, k -> {
+                NonTerminators nt = new NonTerminators();
+                nt.setVal(leftParts);
+                return nt;
+            });
 
             String[] rightParts = parts[1].trim().split(" ");
             for (String rightPart : rightParts) {
-                if(isNonTerminator(rightPart)){
-                    NonTerminators rightN = NonTerminatorsMap.computeIfAbsent(rightPart,NonTerminators::new);
-                    NonTerminators.getMapping().computeIfAbsent('N', k -> new ArrayList<>()).add(rightN);
+                if (isNonTerminator(rightPart)) {
+                    NonTerminators rightN = NonTerminatorsMap.computeIfAbsent(rightPart, k -> {
+                        NonTerminators nt = new NonTerminators();
+                        nt.setVal(rightPart);
+                        return nt;
+                    });
+                    nonTerminators.getMapping().computeIfAbsent('N', k -> new ArrayList<>()).add(rightN);
                 } else {
-                Terminators terminator = TerminatorsMap.computeIfAbsent(rightPart, Terminators::new);
-                NonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(terminator);
+                    Terminators terminator = TerminatorsMap.computeIfAbsent(rightPart, k -> {
+                        Terminators t = new Terminators();
+                        t.setVal(rightPart);
+                        return t;
+                    });
+                    nonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(terminator);
                 }
             }
         }
-
     }
+
+//用于保存文法
+    public List<List<CharacterBase>> saveGrammar(String grammar) {
+        ConverseGrammar(grammar);
+        List<List<CharacterBase>> grammarList = new ArrayList<>();
+        for (NonTerminators nonT : NonTerminatorsMap.values()) {
+            List<CharacterBase> gra = new ArrayList<>();
+            gra.add(nonT);
+            grammarList.add(gra);
+            nonT.setGrammar(grammarList);
+        }
+        return grammarList;
+    }
+
     public static void main(String[] args) {
         TypeConversion typeConversion = new TypeConversion();
         String grammar = "S -> E'\nE' -> a\nB -> b";
-        typeConversion.ConverseGrammar(grammar);
+        List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
 
         System.out.println("Non-terminators:");
         for (String key : typeConversion.getNonTerminatorsMap().keySet()) {
@@ -59,6 +87,14 @@ public class TypeConversion {
         System.out.println("Terminators:");
         for (String key : typeConversion.getTerminatorsMap().keySet()) {
             System.out.println(key);
+        }
+
+        System.out.println("Grammar List:");
+        for (List<CharacterBase> list : grammarList) {
+            for (CharacterBase character : list) {
+                System.out.print(character.getVal() + " ");
+            }
+            System.out.println();
         }
     }
 }
