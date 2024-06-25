@@ -1,16 +1,13 @@
 package Model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class NonTerminators extends CharacterBase{
     private Map<Character, List<CharacterBase>> mapping = new HashMap<>();
 
-    private List<Terminators> first = new ArrayList<>();
+    private Set<CharacterBase> first = new HashSet<>();
 
-    private List<Terminators> follow = new ArrayList<>();
+    private Set<CharacterBase> follow = new HashSet<>();
 
     private List<List<CharacterBase>> grammar = new ArrayList<>();
 
@@ -22,19 +19,19 @@ public class NonTerminators extends CharacterBase{
         return mapping;
     }
 
-    public List<Terminators> getFirst() {
+    public Set<CharacterBase> getFirst() {
         return first;
     }
 
-    public void setFirst(List<Terminators> first) {
-        this.first = first;
-    }
-
-    public List<Terminators> getFollow() {
+    public Set<CharacterBase> getFollow() {
         return follow;
     }
 
-    public void setFollow(List<Terminators> follow) {
+    public void setFirst(Set<CharacterBase> first) {
+        this.first = first;
+    }
+
+    public void setFollow(Set<CharacterBase> follow) {
         this.follow = follow;
     }
 

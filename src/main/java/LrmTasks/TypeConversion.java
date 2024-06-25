@@ -102,11 +102,12 @@ public class TypeConversion {
     }
 
     // 用于保存文法
-    public List<List<CharacterBase>> saveGrammar(String grammar) {
-        List<List<CharacterBase>> grammarList = new ArrayList<>();
+    public void saveGrammar(String grammar) {
         String[] rules = grammar.split("\n");
 
         for (String rule : rules) {
+            List<List<CharacterBase>> grammarList = new ArrayList<>();
+
             String[] parts = rule.split("->");
             String nonT = parts[0].trim();
             NonTerminators nonTerminator = NonTerminatorsMap.get(nonT);
@@ -115,10 +116,13 @@ public class TypeConversion {
 
             for (String production : productions) {
                 List<CharacterBase> productionList = new ArrayList<>();
-                productionList.add(nonTerminator);
+                // productionList.add(nonTerminator);
 
-                for (int i = 0; i < production.length(); ) {
-                    if (Character.isUpperCase(production.charAt(i))) {
+                for (int i = 0; i < production.length();) {
+
+                    if (production.charAt(i) == ' ') {
+                        i++;
+                    } else if (Character.isUpperCase(production.charAt(i))) {
                         StringBuilder nonTerm = new StringBuilder();
                         nonTerm.append(production.charAt(i));
                         i++;
@@ -138,8 +142,10 @@ public class TypeConversion {
                 }
                 grammarList.add(productionList);
             }
+
+            nonTerminator.setGrammar(grammarList);
+
         }
-        return grammarList;
     }
         public static void main(String[] args) {
             TypeConversion typeConversion = new TypeConversion();
@@ -149,7 +155,7 @@ public class TypeConversion {
                     "T'->* F T'|ε\n" +
                     "F->( E )|i\n";
             typeConversion.ConverseGrammar(grammar);
-            List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
+            typeConversion.saveGrammar(grammar);
             typeConversion.removeEmptyTerminators();
 
             System.out.println("非终结符:");
@@ -168,16 +174,6 @@ public class TypeConversion {
             }
 
             System.out.println("文法列表:");
-            for (List<CharacterBase> list : grammarList) {
-                for (CharacterBase character : list) {
-                    if (character == null) {
-                        System.out.print("ε ");
-                    } else {
-                        System.out.print(character.getVal() + " ");
-                    }
-                }
-                System.out.println();
-            }
         }
     }
 
