@@ -10,14 +10,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class test {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Analyzer analyzer = new Analyzer(MakeTable());
-        analyzer.setSentence("i#");
-        MachineStatus machineStatus;
+        analyzer.setSentence("iiiii#");
 
-        while(true) {
-            machineStatus = analyzer.getMachine();
-            analyzer.next();
+        try {
+            do {
+                System.out.println(analyzer.getMachine().toString());
+            } while (analyzer.next());
+        } catch (Exception e) {
+            //System.out.println(e.toString());
+            System.out.println("分析错误，发生在解析: " + analyzer.getMachine().input_str.peek());
         }
     }
 
