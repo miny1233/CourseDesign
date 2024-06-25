@@ -1,17 +1,16 @@
 package LrmTasks;
 
+import Model.EmptyCharacter;
 import Model.NonTerminators;
 import Model.Terminators;
 import Model.CharacterBase;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TypeConversion {
     private Map<String, NonTerminators> NonTerminatorsMap = new HashMap<>();
     private Map<String, Terminators> TerminatorsMap = new HashMap<>();
+    private Map<String, EmptyCharacter> EmptyCharacterMap = new HashMap<>();
 
     // 判断是否是非终结符
     private boolean isNonTerminator(String symbol) {
@@ -24,6 +23,9 @@ public class TypeConversion {
 
     public Map<String, NonTerminators> getNonTerminatorsMap() {
         return NonTerminatorsMap;
+    }
+    public Map<String, EmptyCharacter> getEmptyCharacterMap() {
+        return EmptyCharacterMap;
     }
 
     public Map<String, Terminators> getTerminatorsMap() {
@@ -50,6 +52,11 @@ public class TypeConversion {
                 String trimmedAlternative = alternative.trim(); // 修剪替代选项的空格
                 if (trimmedAlternative.equals("ε")) {
                     nonTerminators.getMapping().computeIfAbsent('E', k -> new ArrayList<>()).add(null);  // 空字符使用 null 表示
+                    EmptyCharacter emptyChar = EmptyCharacterMap.computeIfAbsent("ε", k -> {
+                        EmptyCharacter ec = new EmptyCharacter();
+                        ec.setVal("ε");
+                        return ec;
+                    });
                 } else {
                     for (int i = 0; i < trimmedAlternative.length(); ) {
                         if (Character.isUpperCase(trimmedAlternative.charAt(i))) {
@@ -133,6 +140,10 @@ public class TypeConversion {
             System.out.println(key);
         }
 
+        System.out.println("空字符:");
+        for (String key : typeConversion.getEmptyCharacterMap().keySet()) {
+            System.out.println(key);
+        }
         System.out.println("文法列表:");
         for (List<CharacterBase> list : grammarList) {
             for (CharacterBase character : list) {
