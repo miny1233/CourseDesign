@@ -35,7 +35,7 @@ public class FirstSet {
                     if (!production.get(0).getVal().equals(nonTerm)) {
                         continue; // 忽略不相关的生产式
                     }
-                    for (int i = 1; i < production.size(); i++) { // 跳过第一个元素，因为它是非终结符本身
+                    for (int i = 1; i < production.size(); i++) { // 跳过第一个元素
                         CharacterBase symbol = production.get(i);
                         if (symbol instanceof Terminators) {
                             // 如果是终结符，直接加入 First 集合
@@ -53,7 +53,6 @@ public class FirstSet {
                                     changed = true;
                                 }
                             }
-
                             if (!hasEmpty) {
                                 break;
                             }
@@ -71,7 +70,7 @@ public class FirstSet {
 
         return firstSets;
     }
-    
+
     public List<List<CharacterBase>> getFirstSetsAsList(Map<String, Set<String>> firstSets) {
         List<List<CharacterBase>> firstSetsList = new ArrayList<>();
 
