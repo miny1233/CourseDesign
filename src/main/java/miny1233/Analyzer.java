@@ -64,11 +64,8 @@ public class Analyzer {
 
             machine.AnalyStack.pop();
 
-            ListIterator<CharacterBase> iterator = derivation.listIterator();
-            while(iterator.hasPrevious())
-            {
-                machine.AnalyStack.push(iterator.previous());
-            }
+            for(int idx = derivation.size() - 1; idx >= 0; idx--)
+                machine.AnalyStack.push(derivation.get(idx));
         }
 
         if (topC instanceof EmptyCharacter emptyCharacter)
