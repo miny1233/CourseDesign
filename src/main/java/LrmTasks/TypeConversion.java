@@ -13,6 +13,7 @@ public class TypeConversion {
     private Map<String, NonTerminators> NonTerminatorsMap = new HashMap<>();
     private Map<String, Terminators> TerminatorsMap = new HashMap<>();
 
+    // 判断是否是非终结符
     private boolean isNonTerminator(String symbol) {
         return symbol.matches("^[A-Z]('?[A-Z]*)?$");
     }
@@ -25,7 +26,7 @@ public class TypeConversion {
         return TerminatorsMap;
     }
 
-    //用于String到Object的类型转换
+    // 用于String到Object的类型转换
     public void ConverseGrammar(String grammar) {
         String[] rules = grammar.split("\n");
         for (String rule : rules) {
@@ -42,42 +43,50 @@ public class TypeConversion {
 
             String[] alternatives = parts[1].trim().split("\\|");
             for (String alternative : alternatives) {
-                for (int i = 0; i < alternative.length(); ) {
-                    if (Character.isUpperCase(alternative.charAt(i))) {
-                        StringBuilder nonTerminator = new StringBuilder();
-                        nonTerminator.append(alternative.charAt(i));
-                        i++;
-                        while (i < alternative.length() && (Character.isUpperCase(alternative.charAt(i)) || alternative.charAt(i) == '\'')) {
-                            nonTerminator.append(alternative.charAt(i));
+                String trimmedAlternative = alternative.trim(); // 修剪替代选项的空格
+                if (trimmedAlternative.equals("ε")) {
+                    nonTerminators.getMapping().computeIfAbsent('E', k -> new ArrayList<>()).add(null);  // 空字符使用 null 表示
+                } else {
+                    for (int i = 0; i < trimmedAlternative.length(); ) {
+                        if (Character.isUpperCase(trimmedAlternative.charAt(i))) {
+                            StringBuilder nonTerminator = new StringBuilder();
+                            nonTerminator.append(trimmedAlternative.charAt(i));
                             i++;
-                        }
-                        NonTerminators rightN = NonTerminatorsMap.computeIfAbsent(nonTerminator.toString(), k -> {
-                            NonTerminators nt = new NonTerminators();
-                            nt.setVal(nonTerminator.toString());
-                            return nt;
-                        });
-                        nonTerminators.getMapping().computeIfAbsent('N', k -> new ArrayList<>()).add(rightN);
-                    } else {
-                        StringBuilder terminator = new StringBuilder();
-                        terminator.append(alternative.charAt(i));
-                        i++;
-                        while (i < alternative.length() && !Character.isUpperCase(alternative.charAt(i)) && alternative.charAt(i) != '|') {
-                            terminator.append(alternative.charAt(i));
+                            while (i < trimmedAlternative.length() && (Character.isUpperCase(trimmedAlternative.charAt(i)) || trimmedAlternative.charAt(i) == '\'')) {
+                                nonTerminator.append(trimmedAlternative.charAt(i));
+                                i++;
+                            }
+                            NonTerminators rightN = NonTerminatorsMap.computeIfAbsent(nonTerminator.toString(), k -> {
+                                NonTerminators nt = new NonTerminators();
+                                nt.setVal(nonTerminator.toString());
+                                return nt;
+                            });
+                            nonTerminators.getMapping().computeIfAbsent('N', k -> new ArrayList<>()).add(rightN);
+                        } else {
+                            StringBuilder terminator = new StringBuilder();
+                            terminator.append(trimmedAlternative.charAt(i));
                             i++;
+                            while (i < trimmedAlternative.length() && !Character.isUpperCase(trimmedAlternative.charAt(i)) && trimmedAlternative.charAt(i) != '|') {
+                                terminator.append(trimmedAlternative.charAt(i));
+                                i++;
+                            }
+                            String terminatorStr = terminator.toString().trim(); // 修剪终结符的空格
+                            if (!terminatorStr.isEmpty()) {
+                                Terminators t = TerminatorsMap.computeIfAbsent(terminatorStr, k -> {
+                                    Terminators term = new Terminators();
+                                    term.setVal(terminatorStr);
+                                    return term;
+                                });
+                                nonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(t);
+                            }
                         }
-                        Terminators t = TerminatorsMap.computeIfAbsent(terminator.toString(), k -> {
-                            Terminators term = new Terminators();
-                            term.setVal(terminator.toString());
-                            return term;
-                        });
-                        nonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(t);
                     }
                 }
             }
         }
     }
 
-    //用于保存文法
+    // 用于保存文法
     public List<List<CharacterBase>> saveGrammar(String grammar) {
         ConverseGrammar(grammar);
         List<List<CharacterBase>> grammarList = new ArrayList<>();
@@ -109,15 +118,19 @@ public class TypeConversion {
             System.out.println(key);
         }
 
-        System.out.println("Terminators:");
+        System.out.println("终结符:");
         for (String key : typeConversion.getTerminatorsMap().keySet()) {
             System.out.println(key);
         }
 
-        System.out.println("Grammar List:");
+        System.out.println("文法列表:");
         for (List<CharacterBase> list : grammarList) {
             for (CharacterBase character : list) {
-                System.out.print(character.getVal() + " ");
+                if (character == null) {
+                    System.out.print("ε ");
+                } else {
+                    System.out.print(character.getVal() + " ");
+                }
             }
             System.out.println();
         }
