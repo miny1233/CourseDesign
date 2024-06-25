@@ -12,7 +12,7 @@ import java.util.List;
 public class test {
     public static void main(String[] args) {
         Analyzer analyzer = new Analyzer(MakeTable());
-        analyzer.setSentence("iiiii#");
+        analyzer.setSentence("iiiii");
 
         try {
             do {

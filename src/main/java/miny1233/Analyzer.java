@@ -21,6 +21,7 @@ public class Analyzer {
     public void setSentence(String sentence)
     {
         machine = new MachineStatus();
+        sentence += "#";    // 塞入终结符号
 
         machine.input_str = new ArrayDeque<>();
         for (var ch : sentence.toCharArray())
