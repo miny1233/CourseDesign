@@ -18,6 +18,10 @@ public class TypeConversion {
         return symbol.matches("^[A-Z]('?[A-Z]*)?$");
     }
 
+    public void removeEmptyTerminators() {
+        TerminatorsMap.remove(" ");
+    }
+
     public Map<String, NonTerminators> getNonTerminatorsMap() {
         return NonTerminatorsMap;
     }
@@ -72,12 +76,15 @@ public class TypeConversion {
                             }
                             String terminatorStr = terminator.toString().trim(); // 修剪终结符的空格
                             if (!terminatorStr.isEmpty()) {
-                                Terminators t = TerminatorsMap.computeIfAbsent(terminatorStr, k -> {
-                                    Terminators term = new Terminators();
-                                    term.setVal(terminatorStr);
-                                    return term;
-                                });
-                                nonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(t);
+                                for (int j = 0; j < terminatorStr.length(); j++) {
+                                    String singleTerminator = String.valueOf(terminatorStr.charAt(j));
+                                    Terminators t = TerminatorsMap.computeIfAbsent(singleTerminator, k -> {
+                                        Terminators term = new Terminators();
+                                        term.setVal(singleTerminator);
+                                        return term;
+                                    });
+                                    nonTerminators.getMapping().computeIfAbsent('T', k -> new ArrayList<>()).add(t);
+                                }
                             }
                         }
                     }
@@ -101,6 +108,7 @@ public class TypeConversion {
             grammarList.add(gra);
         }
 
+
         return grammarList;
     }
 
@@ -110,8 +118,10 @@ public class TypeConversion {
                 "E'->+ T E'|ε\n" +
                 "T->F T'\n" +
                 "T'->* F T'|ε\n" +
-                "F->( E )|i";
+                "F->( E )|i\n" +
+                "Q->+ * i";
         List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
+        typeConversion.removeEmptyTerminators();
 
         System.out.println("非终结符:");
         for (String key : typeConversion.getNonTerminatorsMap().keySet()) {
