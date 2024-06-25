@@ -1,6 +1,7 @@
 package miny1233;
 
 import Model.NonTerminators;
+import Model.Terminators;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -36,6 +37,12 @@ public class Analyzer {
     {
         var topC = machine.AnalyStack.peek();
 
+        if (topC instanceof Terminators)
+        {
+            var terminators = (Terminators) topC;
+            // if ()
+
+        }
 
     }
 }
