@@ -11,12 +11,15 @@ import java.util.List;
 
 public class test {
     public static void main(String[] args) {
+
+        System.out.println(Standardizer.standardize("E->F+FT    DA-a"));
+
         Analyzer analyzer = new Analyzer(MakeTable());
         analyzer.setSentence("iiiii");
 
         try {
             do {
-                System.out.println(analyzer.getMachine().toString());
+                //System.out.println(analyzer.getMachine().toString());
             } while (analyzer.next());
         } catch (Exception e) {
             //System.out.println(e.toString());
