@@ -27,9 +27,7 @@ public class FirstSet {
                 var firstSetSize = nonTerminator.getFirst().size();
 
                 for (List<CharacterBase> production : nonTerminator.getGrammar()) {
-
-                    for (int i = 0; i < 1; i++) {
-                        CharacterBase symbol = production.get(i);
+                        CharacterBase symbol = production.getFirst();
 
                         if (symbol instanceof Terminators) {
                             // 如果是终结符，直接加入 First 集合
@@ -37,7 +35,6 @@ public class FirstSet {
                             {
                                 changed = true;
                             }
-                            break;
                         } else if (symbol instanceof NonTerminators) {
                             // 如果是非终结符，加入其 First 集合中的所有非空字符
                             nonTerminator.getFirst().addAll(((NonTerminators) symbol).getFirst());
@@ -54,9 +51,7 @@ public class FirstSet {
                             if (nonTerminator.getFirst().add(symbol)) {
                                 changed = true;
                             }
-                            break;
                         }
-                    }
                 }
 
                 if (nonTerminator.getFirst().size() != firstSetSize) {
