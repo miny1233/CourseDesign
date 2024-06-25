@@ -12,7 +12,7 @@ public class NonTerminators extends CharacterBase{
 
     private List<Terminators> follow = new ArrayList<>();
 
-    private List<List<CharacterBase>> grammar;
+    private List<List<CharacterBase>> grammar = new ArrayList<>();
 
     public void setMapping(Map<Character, List<CharacterBase>> mapping) {
         this.mapping = mapping;
