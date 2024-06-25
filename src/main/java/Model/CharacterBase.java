@@ -27,6 +27,12 @@ public class CharacterBase {
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        return val;
+    }
+
     // 禁止构造
     CharacterBase(){
 
