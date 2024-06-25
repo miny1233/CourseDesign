@@ -1,6 +1,7 @@
 package miny1233;
 
 import Model.CharacterBase;
+import Model.EmptyCharacter;
 import Model.NonTerminators;
 import Model.Terminators;
 
@@ -68,6 +69,11 @@ public class Analyzer {
             {
                 machine.AnalyStack.push(iterator.previous());
             }
+        }
+
+        if (topC instanceof EmptyCharacter emptyCharacter)
+        {
+            machine.AnalyStack.pop();
         }
 
     }
