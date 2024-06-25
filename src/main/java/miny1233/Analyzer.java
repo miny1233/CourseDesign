@@ -6,6 +6,7 @@ import Model.NonTerminators;
 import Model.Terminators;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.ListIterator;
 
 public class Analyzer {
@@ -25,6 +26,7 @@ public class Analyzer {
         for (var ch : sentence.toCharArray())
             machine.input_str.add(ch);
 
+        machine.AnalyStack.push(new Terminators("#"));
         machine.AnalyStack.push(Begin);
     }
 
@@ -32,11 +34,15 @@ public class Analyzer {
         return machine;
     }
 
-    public void next() throws Exception {
+    public boolean next() throws Exception {
+
+        machine.first = null;
+        machine.der = new ArrayList<>();
+
         // 分析完成
         if (machine.AnalyStack.isEmpty())
         {
-            return;
+            return false;
         }
 
         var topC = machine.AnalyStack.peek();
@@ -62,19 +68,20 @@ public class Analyzer {
                 throw new Exception("分析错误!缺少推导！");
             }
 
-            machine.AnalyStack.pop();
+            machine.first = (NonTerminators) machine.AnalyStack.pop();
+            machine.der = derivation;
 
-            ListIterator<CharacterBase> iterator = derivation.listIterator();
-            while(iterator.hasPrevious())
-            {
-                machine.AnalyStack.push(iterator.previous());
-            }
+            for(int idx = derivation.size() - 1; idx >= 0; idx--)
+                machine.AnalyStack.push(derivation.get(idx));
+
         }
 
         if (topC instanceof EmptyCharacter emptyCharacter)
         {
             machine.AnalyStack.pop();
         }
+
+        return true;
 
     }
 }
