@@ -71,6 +71,27 @@ public class FirstSet {
 
         return firstSets;
     }
+    
+    public List<List<CharacterBase>> getFirstSetsAsList(Map<String, Set<String>> firstSets) {
+        List<List<CharacterBase>> firstSetsList = new ArrayList<>();
+
+        for (Map.Entry<String, Set<String>> entry : firstSets.entrySet()) {
+            List<CharacterBase> firstSet = new ArrayList<>();
+            firstSet.add(new NonTerminators(entry.getKey())); // 添加非终结符
+
+            for (String symbol : entry.getValue()) {
+                if (symbol.equals("ε")) {
+                    firstSet.add(new EmptyCharacter());
+                } else {
+                    firstSet.add(new Terminators(symbol));
+                }
+            }
+
+            firstSetsList.add(firstSet);
+        }
+
+        return firstSetsList;
+    }
 
     // 辅助方法，获取 NonTerminators 的所有生产式字符串形式
     private List<String> getProductionStrings(NonTerminators nonTerminator) {
