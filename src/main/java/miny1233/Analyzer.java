@@ -34,6 +34,8 @@ public class Analyzer {
 
     public void next()
     {
+        var topC = machine.AnalyStack.peek();
+
 
     }
 }
