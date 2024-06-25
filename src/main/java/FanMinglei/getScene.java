@@ -1,8 +1,12 @@
 package FanMinglei;
 
+import LrmTasks.FirstSet;
 import LrmTasks.TypeConversion;
+import Model.CharacterBase;
 import Model.NonTerminators;
 import Model.Terminators;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,6 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +25,7 @@ import java.util.Set;
  */
 public class getScene {
     private TypeConversion typeConversion = new TypeConversion();
+    FirstSet firstSet = new FirstSet(typeConversion);
 
     public Scene getFirstScene() {
         VBox vBox = new VBox();
@@ -88,6 +95,7 @@ public class getScene {
 
         //点击获取First集后的工作
         getFirst.setOnAction(actionEvent -> {
+            firstSet.computeFirstSets();
             Stage thirdStage = new Stage();
             Scene FirstCollectionScene = getFirstCollectionScene();
             thirdStage.setTitle("预测分析器");
@@ -125,20 +133,53 @@ public class getScene {
         Label titleLabel = new Label("First集");
         titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;"); // 设置标题的样式
 
-        TableView<Terminators> tableView = new TableView<>();
+        TableView<FirstTableItem> tableView = new TableView<>();
         tableView.setPrefHeight(200); // 设置TableView的高度
+
         Map<String, Terminators> terminatorsMap = typeConversion.getTerminatorsMap();
         typeConversion.removeEmptyTerminators();
         Set<String> keySet = terminatorsMap.keySet();
-        /*for(String str: terminatorsMap.keySet()){
-            System.out.println("str = " + str);
-        }*/
-        tableView.getColumns().add(new TableColumn<>(""));
-        for(String str : keySet){
-            TableColumn column = new TableColumn(terminatorsMap.get(str).getVal());
+
+        List<Terminators> terminators = new ArrayList<>();
+        TableColumn<FirstTableItem, String> firstColumn = new TableColumn<>(" ");
+        firstColumn.setCellValueFactory(cellData -> cellData.getValue().getProperty("left"));
+        tableView.getColumns().add(firstColumn);
+
+        //设置表头
+        for (String str : keySet) {
+            Terminators terminator = terminatorsMap.get(str);
+            TableColumn<FirstTableItem, String> column = new TableColumn<>(terminator.getVal());
+            column.setCellValueFactory(cellData -> cellData.getValue().getProperty(terminator.getVal()));
             column.setMinWidth(80);
             tableView.getColumns().add(column);
+            terminators.add(terminator);
         }
+        Map<String, NonTerminators> nonTerminatorsMap = typeConversion.getNonTerminatorsMap();
+        Set<String> keySet1 = nonTerminatorsMap.keySet();
+        ObservableList<FirstTableItem> data = FXCollections.observableArrayList();
+
+        for (String str : keySet1) {
+            NonTerminators nonTerminators = nonTerminatorsMap.get(str); // 获取到当前非终结符
+            Set<CharacterBase> first = nonTerminators.getFirst(); // 获取其First集
+            System.out.println("first的大小：" + first.size());
+            for(CharacterBase t:first){
+                System.out.println("first = " + t.getVal());
+            }
+            FirstTableItem row = new FirstTableItem();
+            row.setProperty("left", "First(" + str + ")"); // 最左边那一列
+            for (Terminators temp : terminators) { // 遍历所有终结符列
+                String result = "0";
+                for (CharacterBase inner : first) { // 如果当前First集中有，就设置为1
+                    if (inner == temp) {
+                        result = "1";
+                    }
+                }
+                row.setProperty(temp.getVal(), result);
+            }
+            data.add(row);
+        }
+
+        tableView.setItems(data);
 
         // 将标题和TableView添加到VBox
         vBox.getChildren().addAll(titleLabel, tableView);
@@ -156,17 +197,21 @@ public class getScene {
         Label titleLabel = new Label("Follow集");
         titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;"); // 设置标题的样式
 
-        TableView<NonTerminators> tableView = new TableView<>();
+        TableView<FirstTableItem> tableView = new TableView<>();
         tableView.setPrefHeight(200);
 
         Map<String, Terminators> terminatorsMap = typeConversion.getTerminatorsMap();
         typeConversion.removeEmptyTerminators();
         Set<String> keySet = terminatorsMap.keySet();
         tableView.getColumns().add(new TableColumn<>(""));
+        List<Terminators> terminators = new ArrayList<>();
         for(String str : keySet){
-            TableColumn column = new TableColumn(terminatorsMap.get(str).getVal());
+            Terminators terminator = terminatorsMap.get(str);
+            TableColumn<FirstTableItem, String> column = new TableColumn<>(terminator.getVal());
+            column.setCellValueFactory(cellData -> cellData.getValue().getProperty(terminator.getVal()));
             column.setMinWidth(80);
             tableView.getColumns().add(column);
+            terminators.add(terminator);
         }
 
 
