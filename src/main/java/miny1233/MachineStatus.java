@@ -22,7 +22,6 @@ public class MachineStatus {
             for (CharacterBase character : der) {
                 output.append(character.toString());
             }
-            first = null;
         }
 
         return output.toString();

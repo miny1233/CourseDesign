@@ -6,6 +6,7 @@ import Model.NonTerminators;
 import Model.Terminators;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.ListIterator;
 
 public class Analyzer {
@@ -34,6 +35,10 @@ public class Analyzer {
     }
 
     public boolean next() throws Exception {
+
+        machine.first = null;
+        machine.der = new ArrayList<>();
+
         // 分析完成
         if (machine.AnalyStack.isEmpty())
         {
