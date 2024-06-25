@@ -1,9 +1,9 @@
 package LrmTasks;
 
+import Model.CharacterBase;
 import Model.EmptyCharacter;
 import Model.NonTerminators;
 import Model.Terminators;
-import Model.CharacterBase;
 
 import java.util.*;
 
@@ -24,6 +24,7 @@ public class TypeConversion {
     public Map<String, NonTerminators> getNonTerminatorsMap() {
         return NonTerminatorsMap;
     }
+
     public Map<String, EmptyCharacter> getEmptyCharacterMap() {
         return EmptyCharacterMap;
     }
@@ -102,58 +103,82 @@ public class TypeConversion {
 
     // 用于保存文法
     public List<List<CharacterBase>> saveGrammar(String grammar) {
-        ConverseGrammar(grammar);
         List<List<CharacterBase>> grammarList = new ArrayList<>();
+        String[] rules = grammar.split("\n");
 
-        for (NonTerminators nonT : NonTerminatorsMap.values()) {
-            List<CharacterBase> gra = new ArrayList<>();
-            gra.add(nonT);
-            Map<Character, List<CharacterBase>> mapping = nonT.getMapping();
-            for (Map.Entry<Character, List<CharacterBase>> entry : mapping.entrySet()) {
-                gra.addAll(entry.getValue());
+        for (String rule : rules) {
+            String[] parts = rule.split("->");
+            String nonT = parts[0].trim();
+            NonTerminators nonTerminator = NonTerminatorsMap.get(nonT);
+
+            String[] productions = parts[1].trim().split("\\|");
+
+            for (String production : productions) {
+                List<CharacterBase> productionList = new ArrayList<>();
+                productionList.add(nonTerminator);
+
+                for (int i = 0; i < production.length(); ) {
+                    if (Character.isUpperCase(production.charAt(i))) {
+                        StringBuilder nonTerm = new StringBuilder();
+                        nonTerm.append(production.charAt(i));
+                        i++;
+                        while (i < production.length() && (Character.isUpperCase(production.charAt(i)) || production.charAt(i) == '\'')) {
+                            nonTerm.append(production.charAt(i));
+                            i++;
+                        }
+                        productionList.add(NonTerminatorsMap.get(nonTerm.toString()));
+                    } else if (production.charAt(i) == 'ε') {
+                        productionList.add(EmptyCharacterMap.get("ε"));
+                        i++;
+                    } else {
+                        String term = String.valueOf(production.charAt(i));
+                        productionList.add(TerminatorsMap.get(term));
+                        i++;
+                    }
+                }
+                grammarList.add(productionList);
             }
-            grammarList.add(gra);
         }
-
-
         return grammarList;
     }
+        public static void main(String[] args) {
+            TypeConversion typeConversion = new TypeConversion();
+            String grammar = "E->T E'\n" +
+                    "E'->+ T E'|ε\n" +
+                    "T->F T'\n" +
+                    "T'->* F T'|ε\n" +
+                    "F->( E )|i\n";
+            typeConversion.ConverseGrammar(grammar);
+            List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
+            typeConversion.removeEmptyTerminators();
 
-    public static void main(String[] args) {
-        TypeConversion typeConversion = new TypeConversion();
-        String grammar = "E->T E'\n" +
-                "E'->+ T E'|ε\n" +
-                "T->F T'\n" +
-                "T'->* F T'|ε\n" +
-                "F->( E )|i\n" +
-                "Q->+ * i";
-        List<List<CharacterBase>> grammarList = typeConversion.saveGrammar(grammar);
-        typeConversion.removeEmptyTerminators();
-
-        System.out.println("非终结符:");
-        for (String key : typeConversion.getNonTerminatorsMap().keySet()) {
-            System.out.println(key);
-        }
-
-        System.out.println("终结符:");
-        for (String key : typeConversion.getTerminatorsMap().keySet()) {
-            System.out.println(key);
-        }
-
-        System.out.println("空字符:");
-        for (String key : typeConversion.getEmptyCharacterMap().keySet()) {
-            System.out.println(key);
-        }
-        System.out.println("文法列表:");
-        for (List<CharacterBase> list : grammarList) {
-            for (CharacterBase character : list) {
-                if (character == null) {
-                    System.out.print("ε ");
-                } else {
-                    System.out.print(character.getVal() + " ");
-                }
+            System.out.println("非终结符:");
+            for (String key : typeConversion.getNonTerminatorsMap().keySet()) {
+                System.out.println(key);
             }
-            System.out.println();
+
+            System.out.println("终结符:");
+            for (String key : typeConversion.getTerminatorsMap().keySet()) {
+                System.out.println(key);
+            }
+
+            System.out.println("空字符:");
+            for (String key : typeConversion.getEmptyCharacterMap().keySet()) {
+                System.out.println(key);
+            }
+
+            System.out.println("文法列表:");
+            for (List<CharacterBase> list : grammarList) {
+                for (CharacterBase character : list) {
+                    if (character == null) {
+                        System.out.print("ε ");
+                    } else {
+                        System.out.print(character.getVal() + " ");
+                    }
+                }
+                System.out.println();
+            }
         }
     }
-}
+
+
