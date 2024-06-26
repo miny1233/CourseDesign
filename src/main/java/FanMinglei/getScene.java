@@ -62,6 +62,7 @@ public class getScene {
                 System.out.println("输入的文本内容是：" + text);
                 firstSet.computeFirstSets();
                 followSet.getFollowSet();
+                analyticsTable.getAnalyticsTable();
                 Stage secondStage = new Stage();
                 Scene secondScene = getSecondScene();
                 secondStage.setTitle("预测分析器");
@@ -123,7 +124,7 @@ public class getScene {
         });
         //点击获取预测分析表后的动作
         getTable.setOnAction(actionEvent -> {
-            analyticsTable.getAnalyticsTable();
+
             Stage thirdStage = new Stage();
             Scene tableScene = getTableScene();
             thirdStage.setTitle("预测分析器");
