@@ -41,7 +41,7 @@ public class Analyzer {
         machine.der = new ArrayList<>();
 
         // 分析完成
-        if (machine.AnalyStack.isEmpty())
+        if (machine.AnalyStack.isEmpty() || machine.input_str.isEmpty())
         {
             return false;
         }
