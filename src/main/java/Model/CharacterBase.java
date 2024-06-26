@@ -13,19 +13,21 @@ public class CharacterBase {
     @Override
     public boolean equals(Object obj) {
 
-        CharacterBase other = (CharacterBase) obj;
-
-        if (!this.getClass().equals(obj.getClass()))
-        {
-            return false;
+        if (obj instanceof CharacterBase other) {
+            return getVal().equals(other.getVal());
         }
 
-        return getVal().equals(other.getVal());
+        return false;
     }
 
     @Override
     public String toString() {
         return val;
+    }
+
+    @Override
+    public int hashCode() {
+        return val.hashCode();
     }
 
     // 禁止构造

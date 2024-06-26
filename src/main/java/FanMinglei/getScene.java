@@ -17,10 +17,7 @@ import javafx.stage.Stage;
 import miny1233.Analyzer;
 import miny1233.Standardizer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -193,12 +190,7 @@ public class getScene {
             FirstTableItem row = new FirstTableItem();
             row.setProperty("left", "First(" + str + ")"); // 最左边那一列
             for (Terminators temp : terminators) { // 遍历所有终结符列
-                String result = "0";
-                for (CharacterBase inner : first) { // 如果当前First集中有，就设置为1
-                    if (inner.equals(temp)) {
-                        result = "1";
-                    }
-                }
+                String result =  first.contains(temp) ? "0" : "1"; // 如果当前First集中有，就设置为1
                 row.setProperty(temp.getVal(), result);
             }
             // row.setProperty("left", "First(" + str + ")"); // 最左边那一列
@@ -265,12 +257,7 @@ public class getScene {
            FollowTableItem row = new FollowTableItem();
             row.setProperty("left", "Follow(" + str + ")"); // 最左边那一列
             for (Terminators temp : terminators) { // 遍历所有终结符列
-                String result = "0";
-                for (CharacterBase inner : follow) { // 如果当前Follow集中有，就设置为1
-                    if (inner.getVal() == temp.getVal()) {
-                        result = "1";
-                    }
-                }
+                String result = follow.contains(temp) ? "1" : "0";// 如果当前Follow集中有，就设置为1
                 row.setProperty(temp.getVal(), result);
             }
             data.add(row);
@@ -409,6 +396,7 @@ public class getScene {
             }
             OutputBuffer.get().append('\n');
             processOutput.setText(OutputBuffer.toString());
+            processOutput.setScrollTop(Double.MAX_VALUE);
         });
 
         // 将控件添加到VBox
