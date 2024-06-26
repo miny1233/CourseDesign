@@ -20,12 +20,7 @@ public class CharacterBase {
             return false;
         }
 
-        if (getVal() == other.getVal())
-        {
-            return true;
-        }
-
-        return false;
+        return getVal().equals(other.getVal());
     }
 
     @Override
