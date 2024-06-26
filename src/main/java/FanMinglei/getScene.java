@@ -14,12 +14,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import miny1233.Analyzer;
 import miny1233.Standardizer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 获取Scene
@@ -371,19 +373,39 @@ public class getScene {
         processOutput.setWrapText(true); // 自动换行
         processOutput.setEditable(false); // 设置为只读
 
+        AtomicReference<StringBuilder> OutputBuffer = new AtomicReference<>(new StringBuilder());
+        AtomicReference<Analyzer> analyzer = new AtomicReference<>(new Analyzer(typeConversion.getNonTerminatorsMap().get("E")));
         //提交后的事情
         submitButton.setOnAction(event -> {
             String sentence = inputSentence.getText();
             if(!sentence.isEmpty()){
+                // 刷新显示和分析器
+                OutputBuffer.set(new StringBuilder());
+                analyzer.set(new Analyzer(typeConversion.getNonTerminatorsMap().get("E")));
                 //隐藏button
                 submitButton.setVisible(false);
-                String analysisProcess = "i进栈，用产生式F->i归约"; // 调用方法执行预测分析过程
-                processOutput.setText(analysisProcess); // 显示预测分析过程
+                analyzer.get().setSentence(sentence); // 调用方法执行预测分析过程
+                OutputBuffer.get().append(analyzer.get().getMachine().toString()).append('\n');
+                processOutput.setText(OutputBuffer.toString()); // 显示预测分析过程
             }else {
                 Alert alertMessage = new Alert(Alert.AlertType.INFORMATION);
                 alertMessage.setContentText("句子不能为空");
                 alertMessage.show();
             }
+        });
+
+        step.setOnAction(event -> {
+            try {
+                if(analyzer.get().next())
+                    OutputBuffer.get().append(analyzer.get().getMachine().toString());
+                else
+                    OutputBuffer.get().append("分析停止 状态:").append(analyzer.get().getMachine().toString());
+            }catch (Exception e)
+            {
+                OutputBuffer.get().append("发生错误 当前状态:").append(analyzer.get().getMachine().toString());
+            }
+            OutputBuffer.get().append('\n');
+            processOutput.setText(OutputBuffer.toString());
         });
 
         // 将控件添加到VBox
