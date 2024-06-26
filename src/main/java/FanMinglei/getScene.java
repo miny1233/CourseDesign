@@ -193,13 +193,11 @@ public class getScene {
                 String result =  first.contains(temp) ? "0" : "1"; // 如果当前First集中有，就设置为1
                 row.setProperty(temp.getVal(), result);
             }
-            // row.setProperty("left", "First(" + str + ")"); // 最左边那一列
             if (first.containsAll(typeConversion.getEmptyCharacterMap().values())) {
                 row.setProperty("empty","1");
             } else {
                 row.setProperty("empty","0");
             }
-
             data.add(row);
         }
 
