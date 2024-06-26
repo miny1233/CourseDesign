@@ -60,6 +60,8 @@ public class getScene {
                 typeConversion.ConverseGrammar(text);
                 typeConversion.saveGrammar(text);
                 System.out.println("输入的文本内容是：" + text);
+                firstSet.computeFirstSets();
+                followSet.getFollowSet();
                 Stage secondStage = new Stage();
                 Scene secondScene = getSecondScene();
                 secondStage.setTitle("预测分析器");
@@ -103,7 +105,7 @@ public class getScene {
 
         //点击获取First集后的工作
         getFirst.setOnAction(actionEvent -> {
-            firstSet.computeFirstSets();
+
             Stage thirdStage = new Stage();
             Scene FirstCollectionScene = getFirstCollectionScene();
             thirdStage.setTitle("预测分析器");
@@ -112,7 +114,7 @@ public class getScene {
         });
         //点击获取Follow集后的工作
         getFollow.setOnAction(actionEvent -> {
-            followSet.getFollowSet();
+
             Stage thirdStage = new Stage();
             Scene FollowCollectionScene = getFollowCollectionScene();
             thirdStage.setTitle("预测分析器");
