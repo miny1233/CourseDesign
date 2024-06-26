@@ -3,7 +3,7 @@ package Model;
 import java.util.*;
 
 public class NonTerminators extends CharacterBase{
-    private Map<Character, List<CharacterBase>> mapping = new HashMap<>();
+    private Map<Character, List<CharacterBase>> mapping = new HashMap<>(); //预测分析表
 
     private Set<CharacterBase> first = new HashSet<>();
 

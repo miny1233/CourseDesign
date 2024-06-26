@@ -22,12 +22,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 登录页面
+ * 获取Scene
  */
 public class getScene {
     private TypeConversion typeConversion = new TypeConversion();
     FirstSet firstSet = new FirstSet(typeConversion);
     FollowSet followSet = new FollowSet(typeConversion);
+
+    AnalyticsTable analyticsTable = new AnalyticsTable(typeConversion);
 
     public Scene getFirstScene() {
         VBox vBox = new VBox();
@@ -115,10 +117,20 @@ public class getScene {
             thirdStage.setScene(FollowCollectionScene);
             thirdStage.show();
         });
+        //点击获取预测分析表后的动作
+        getTable.setOnAction(actionEvent -> {
+            analyticsTable.getAnalyticsTable();
+            Stage thirdStage = new Stage();
+            Scene tableScene = getTableScene();
+            thirdStage.setTitle("预测分析器");
+            thirdStage.setScene(tableScene);
+            thirdStage.show();
+        });
 
 
         //点击预测分析过程后的工作
         getProcess.setOnAction(actionEvent -> {
+
             Stage thirdStage = new Stage();
             Scene ProcessScene = getProcessScene();
             thirdStage.setTitle("预测分析器");
@@ -240,7 +252,7 @@ public class getScene {
 
         for (String str : keySet1) {
             NonTerminators nonTerminators = nonTerminatorsMap.get(str); // 获取到当前非终结符
-            Set<CharacterBase> follow = nonTerminators.getFollow(); // 获取其First集
+            Set<CharacterBase> follow = nonTerminators.getFollow(); // 获取Follow集
             System.out.println("follow的大小：" + follow.size());
             for(CharacterBase t:follow){
                 System.out.println("follow = " + t.getVal());
@@ -264,6 +276,69 @@ public class getScene {
         // 将标题和TableView添加到VBox
         vBox.getChildren().addAll(titleLabel, tableView);
 
+        Scene scene = new Scene(vBox, 500, 300);
+        return scene;
+    }
+
+    public Scene getTableScene(){
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(20, 20, 20, 20));
+        vBox.setSpacing(10); // 增加VBox子项之间的间距
+        vBox.setAlignment(Pos.TOP_CENTER); // 居中对齐
+
+        Label titleLabel = new Label("预测分析表");
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;"); // 设置标题的样式
+
+        TableView<AnalyticsTableItem> tableView = new TableView<>();
+        tableView.setPrefHeight(200); // 设置TableView的高度
+
+        Map<String, Terminators> terminatorsMap = typeConversion.getTerminatorsMap();
+        typeConversion.removeEmptyTerminators();
+        Set<String> keySet = terminatorsMap.keySet();
+
+        List<Terminators> terminators = new ArrayList<>();
+        TableColumn<AnalyticsTableItem, String> firstColumn = new TableColumn<>(" ");
+        firstColumn.setCellValueFactory(cellData -> cellData.getValue().getProperty("left"));
+        tableView.getColumns().add(firstColumn);
+
+        //设置表头
+        for (String str : keySet) {
+            Terminators terminator = terminatorsMap.get(str);
+            TableColumn<AnalyticsTableItem, String> column = new TableColumn<>(terminator.getVal());
+            column.setCellValueFactory(cellData -> cellData.getValue().getProperty(terminator.getVal()));
+            column.setMinWidth(80);
+            tableView.getColumns().add(column);
+            terminators.add(terminator);
+        }
+
+        Map<String, NonTerminators> nonTerminatorsMap = typeConversion.getNonTerminatorsMap();
+        ObservableList<AnalyticsTableItem> data = FXCollections.observableArrayList();
+        for(var key : nonTerminatorsMap.keySet()){
+            NonTerminators nonTerminator = nonTerminatorsMap.get(key); //获取当前非终结符
+            Map<Character, List<CharacterBase>> mapping = nonTerminator.getMapping();  //获取mapping
+            AnalyticsTableItem row = new AnalyticsTableItem();
+            row.setProperty("left", nonTerminator.getVal()); // 最左边那一列
+            for(var terminator:terminators){
+                //遍历所有终结符，找到mapping中key与其一样的，设置该单元格的值为List中所有元素转字符串后拼接
+                String contentOfCell = "";
+                String right = "";
+                for(var keyOfMapping : mapping.keySet()){
+
+                    if(terminator.getVal().charAt(0) == keyOfMapping){
+                        List<CharacterBase> list = mapping.get(keyOfMapping);
+                        contentOfCell = nonTerminator.getVal() + "->";
+                        for(var contentOfList : list){
+                            right+=contentOfList.getVal();
+                        }
+                    }
+                }
+                row.setProperty(terminator.getVal(),contentOfCell+=right);
+            }
+            data.add(row);
+        }
+        tableView.setItems(data);
+
+        vBox.getChildren().addAll(titleLabel, tableView);
         Scene scene = new Scene(vBox, 500, 300);
         return scene;
     }
@@ -313,6 +388,7 @@ public class getScene {
 
         // 将控件添加到VBox
         vBox.getChildren().addAll(titleLabel, inputSentence, submitButton, outputLabel,step, processOutput);
+
 
         Scene scene = new Scene(vBox, 500, 400); // 调整场景大小以适应内容
         return scene;
