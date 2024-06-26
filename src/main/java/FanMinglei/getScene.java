@@ -201,13 +201,11 @@ public class getScene {
                 }
                 row.setProperty(temp.getVal(), result);
             }
-            // row.setProperty("left", "First(" + str + ")"); // 最左边那一列
             if (first.containsAll(typeConversion.getEmptyCharacterMap().values())) {
                 row.setProperty("empty","1");
             } else {
                 row.setProperty("empty","0");
             }
-
             data.add(row);
         }
 
