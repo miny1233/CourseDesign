@@ -33,6 +33,11 @@ public class TypeConversion {
         return TerminatorsMap;
     }
 
+    public TypeConversion()
+    {
+        TerminatorsMap.put("#",new Terminators("#"));
+    }
+
     // 用于String到Object的类型转换
     public void ConverseGrammar(String grammar) {
         String[] rules = grammar.split("\n");
