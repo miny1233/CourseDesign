@@ -371,7 +371,10 @@ public class getScene {
                 OutputBuffer.set(new StringBuilder());
                 analyzer.set(new Analyzer(typeConversion.getNonTerminatorsMap().get("E")));
                 //隐藏button
-                submitButton.setVisible(false);
+                //submitButton.setVisible(false);
+                if(!step.isVisible()){
+                    step.setVisible(true);  //针对于分析完毕后，单步按钮消失，此时点击提交后进行新一轮分析，单步按钮不显示的情况
+                }
                 analyzer.get().setSentence(sentence); // 调用方法执行预测分析过程
                 OutputBuffer.get().append(analyzer.get().getMachine().toString()).append('\n');
                 processOutput.setText(OutputBuffer.toString()); // 显示预测分析过程
@@ -395,6 +398,9 @@ public class getScene {
             OutputBuffer.get().append('\n');
             processOutput.setText(OutputBuffer.toString());
             processOutput.setScrollTop(Double.MAX_VALUE);
+            if(processOutput.getText().contains("停止")){
+                step.setVisible(false); //文本框中包含停止，隐藏单步按钮
+            }
         });
 
         // 将控件添加到VBox
