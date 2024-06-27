@@ -53,6 +53,7 @@ public class getScene {
         submit.setOnAction(event -> {
             String text = input.getText();
             if(!text.isEmpty()){
+
                 text = Standardizer.standardize(text);
                 typeConversion.ConverseGrammar(text);
                 typeConversion.saveGrammar(text);
@@ -60,6 +61,7 @@ public class getScene {
                 firstSet.computeFirstSets();
                 followSet.getFollowSet();
                 analyticsTable.getAnalyticsTable();
+
                 Stage secondStage = new Stage();
                 Scene secondScene = getSecondScene();
                 secondStage.setTitle("预测分析器");
@@ -190,10 +192,15 @@ public class getScene {
             FirstTableItem row = new FirstTableItem();
             row.setProperty("left", "First(" + str + ")"); // 最左边那一列
             for (Terminators temp : terminators) { // 遍历所有终结符列
-                String result =  first.contains(temp) ? "0" : "1"; // 如果当前First集中有，就设置为1
+                String result = "0";
+                for(var inner : first){
+                    if(temp.getVal().equals(inner.getVal())){
+                        result = "1";  //First集中存在
+                    }
+                }
                 row.setProperty(temp.getVal(), result);
             }
-            if (first.containsAll(typeConversion.getEmptyCharacterMap().values())) {
+            if (first.contains(typeConversion.getEmptyCharacterMap().values())) {
                 row.setProperty("empty","1");
             } else {
                 row.setProperty("empty","0");
