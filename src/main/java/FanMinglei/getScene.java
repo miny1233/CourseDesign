@@ -39,9 +39,10 @@ public class getScene {
         Label label1 = new Label("请输入文法：");
         label1.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;"); // 设置标签的样式
 
-        TextArea input = new TextArea();
+        TextArea input = new TextArea("G(E)：");
         input.setPrefHeight(100); // 设置TextArea的高度
         input.setWrapText(true); // 自动换行
+        input.positionCaret(5); //设置光标位置
 
         Button submit = new Button("提交");
         submit.setStyle("-fx-font-size: 14px;"); // 设置按钮的样式
@@ -52,21 +53,27 @@ public class getScene {
 
         submit.setOnAction(event -> {
             String text = input.getText();
+            text = text.substring(5);  //去除提示信息
             if(!text.isEmpty()){
 
                 text = Standardizer.standardize(text);
                 typeConversion.ConverseGrammar(text);
                 typeConversion.saveGrammar(text);
                 System.out.println("输入的文本内容是：" + text);
-                firstSet.computeFirstSets();
-                followSet.getFollowSet();
-                analyticsTable.getAnalyticsTable();
-
-                Stage secondStage = new Stage();
-                Scene secondScene = getSecondScene();
-                secondStage.setTitle("预测分析器");
-                secondStage.setScene(secondScene);
-                secondStage.show();
+                try {
+                    firstSet.computeFirstSets();
+                    followSet.getFollowSet();
+                    analyticsTable.getAnalyticsTable();
+                    Stage secondStage = new Stage();
+                    Scene secondScene = getSecondScene();
+                    secondStage.setTitle("预测分析器");
+                    secondStage.setScene(secondScene);
+                    secondStage.show();
+                }catch (Exception e){
+                    Alert alertMessage = new Alert(Alert.AlertType.INFORMATION);
+                    alertMessage.setContentText("请输入正确的上下文无关文法（文法开始符号为E）");
+                    alertMessage.show();
+                }
             }else {
                 Alert alertMessage = new Alert(Alert.AlertType.INFORMATION);
                 alertMessage.setContentText("文法不能为空");
@@ -262,8 +269,13 @@ public class getScene {
            FollowTableItem row = new FollowTableItem();
             row.setProperty("left", "Follow(" + str + ")"); // 最左边那一列
             for (Terminators temp : terminators) { // 遍历所有终结符列
-                String result = follow.contains(temp) ? "1" : "0";// 如果当前Follow集中有，就设置为1
-                row.setProperty(temp.getVal(), result);
+               String result = "0";
+               for(var inner : follow){
+                   if(temp.getVal().equals(inner.getVal())){
+                       result = "1";
+                   }
+               }
+                row.setProperty(temp.getVal(),result);
             }
             data.add(row);
         }
@@ -405,7 +417,7 @@ public class getScene {
             OutputBuffer.get().append('\n');
             processOutput.setText(OutputBuffer.toString());
             processOutput.setScrollTop(Double.MAX_VALUE);
-            if(processOutput.getText().contains("停止")){
+            if(processOutput.getText().contains("停止") || processOutput.getText().contains("错误")){
                 step.setVisible(false); //文本框中包含停止，隐藏单步按钮
             }
         });
