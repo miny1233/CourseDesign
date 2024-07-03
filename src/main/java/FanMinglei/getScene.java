@@ -57,8 +57,14 @@ public class getScene {
             if(!text.isEmpty()){
 
                 text = Standardizer.standardize(text);
-                typeConversion.ConverseGrammar(text);
-                typeConversion.saveGrammar(text);
+                try {
+                    typeConversion.ConverseGrammar(text);
+                    typeConversion.saveGrammar(text);
+                }catch (Exception e){
+                    Alert alertMessage = new Alert(Alert.AlertType.INFORMATION);
+                    alertMessage.setContentText("请输入正确的上下文无关文法（文法开始符号为E）");
+                    alertMessage.show();
+                }
                 System.out.println("输入的文本内容是：" + text);
                 try {
                     firstSet.computeFirstSets();
@@ -207,7 +213,7 @@ public class getScene {
                 }
                 row.setProperty(temp.getVal(), result);
             }
-            if (first.contains(typeConversion.getEmptyCharacterMap().values())) {
+            if (first.containsAll(typeConversion.getEmptyCharacterMap().values())) {
                 row.setProperty("empty","1");
             } else {
                 row.setProperty("empty","0");
