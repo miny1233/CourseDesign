@@ -31,7 +31,7 @@ public class AnalyticsTable {
                     //推出空
                     //获取当前非终结符的Follow集
                     Set<CharacterBase> followSet = nonTerminator.getFollow();
-                    //将follow中元素所在列都设置为空
+                    //将follow中元素所在列都设置为innerList
                     for(var followItem : followSet){
                         nonTerminator.getMapping().put(followItem.getVal().charAt(0),innerList);
                     }

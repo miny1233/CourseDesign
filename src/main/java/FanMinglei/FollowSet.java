@@ -48,8 +48,6 @@ public class FollowSet {
                                        change = true;
                                    }
                                }
-
-
                            }
                        }
                        if(i == production.size()-1 && production.get(i) instanceof NonTerminators){
