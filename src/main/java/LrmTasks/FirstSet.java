@@ -38,11 +38,16 @@ public class FirstSet {
                         } else if (symbol instanceof NonTerminators) {
                             // 如果是非终结符，加入其 First 集合中的所有非空字符
                             nonTerminator.getFirst().addAll(((NonTerminators) symbol).getFirst());
-                            boolean hasEmpty = ((NonTerminators) symbol).getFirst().contains("ε");
+                            for(int pro_idx = 0;pro_idx < production.size() && ((NonTerminators) symbol).getFirst().containsAll(typeConversion.getEmptyCharacterMap().values());pro_idx++) {
 
-                            for (var term : ((NonTerminators) symbol).getFirst()) {
-                                if (!Objects.equals(term.getVal(), "ε") && nonTerminator.getFirst().add(term)) {
-                                    changed = true;
+                                symbol = production.get(pro_idx);
+                                if (!(symbol instanceof NonTerminators))
+                                    break;
+
+                                for (var term : ((NonTerminators) symbol).getFirst()) {
+                                    if (!Objects.equals(term.getVal(), "ε") && nonTerminator.getFirst().add(term)) {
+                                        changed = true;
+                                    }
                                 }
                             }
 
